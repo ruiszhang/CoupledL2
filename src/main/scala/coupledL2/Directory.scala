@@ -278,8 +278,8 @@ class Directory(implicit p: Parameters) extends L2Module {
   replacerWen := updateHit || updateRefill
 
   // hit-Promotion, miss-Insertion for RRIP, so refill should hit = false.B
-  val touch_way_s3 = Mux(refillReqValid_s3, replaceWay, way_s3)
-  val rrip_hit_s3 = Mux(refillReqValid_s3, false.B, hit_s3)
+  val touch_way_s3 = way_s3
+  val rrip_hit_s3 = hit_s3
   // origin-bit marks whether the data_block is reused
   val origin_bit_opt = if(random_repl) None else
     Some(Module(new SRAMTemplate(Bool(), sets, ways, singlePort = true)))
@@ -299,7 +299,7 @@ class Directory(implicit p: Parameters) extends L2Module {
     val req_type = WireInit(0.U(4.W))
     req_type := Cat(origin_bits_hold(touch_way_s3),
                     req_s3.replacerInfo.channel(2),
-                    (req_s3.replacerInfo.channel(0) && req_s3.replacerInfo.opcode === Hint) || (req_s3.replacerInfo.channel(2) && metaAll_s3(touch_way_s3).prefetch.getOrElse(false.B)) || req_s3.replacerInfo.refill_prefetch,
+                    (req_s3.replacerInfo.channel(0) && req_s3.replacerInfo.opcode === Hint && !req_s3.refill) || (req_s3.replacerInfo.channel(2) && metaAll_s3(touch_way_s3).prefetch.getOrElse(false.B)) || req_s3.replacerInfo.refill_prefetch,
                     req_s3.refill
                     )
     
@@ -319,7 +319,7 @@ class Directory(implicit p: Parameters) extends L2Module {
     val req_type = WireInit(0.U(4.W))
     req_type := Cat(origin_bits_hold(touch_way_s3),
       req_s3.replacerInfo.channel(2),
-      (req_s3.replacerInfo.channel(0) && req_s3.replacerInfo.opcode === Hint) || (req_s3.replacerInfo.channel(2) && metaAll_s3(touch_way_s3).prefetch.getOrElse(false.B)) || req_s3.replacerInfo.refill_prefetch,
+      (req_s3.replacerInfo.channel(0) && req_s3.replacerInfo.opcode === Hint && !req_s3.refill) || (req_s3.replacerInfo.channel(2) && metaAll_s3(touch_way_s3).prefetch.getOrElse(false.B)) || req_s3.replacerInfo.refill_prefetch,
       req_s3.refill
     )
     
@@ -329,8 +329,8 @@ class Directory(implicit p: Parameters) extends L2Module {
     // basic SDMs complement-selection policy: srrip--set_idx[group-:]==set_idx[group_offset-:]; brrip--set_idx[group-:]==!set_idx[group_offset-:]
     val setBits = log2Ceil(sets)
     val half_setBits = setBits >> 1
-    val match_a = set_s3(setBits-1,setBits-half_setBits-1)===set_s3(setBits-half_setBits-1,0)  // 512 sets [8:4][4:0]
-    val match_b = set_s3(setBits-1,setBits-half_setBits-1)===(~set_s3(setBits-half_setBits-1,0))
+    val match_a = set_s3(setBits-1,setBits-half_setBits)===set_s3(half_setBits-1,0)  // 512 sets [8:5][3:0]
+    val match_b = set_s3(setBits-1,setBits-half_setBits)===(~set_s3(half_setBits-1,0))
     when(refillReqValid_s3 && match_a && !rrip_hit_s3 && (PSEL=/=1023.U)){  //SDMs_srrip miss
       PSEL := PSEL + 1.U
     } .elsewhen(refillReqValid_s3 && match_b && !rrip_hit_s3 && (PSEL=/=0.U)){ //SDMs_brrip miss

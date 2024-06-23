@@ -337,7 +337,7 @@ class StaticRRIP(n_ways: Int) extends ReplacementPolicy {
     nextState.zipWithIndex.map { case (e, i) =>
       e := Mux(i.U === touch_way, 
               Mux((req_type(2,0) === 0.U && hit) || req_type(2,0) === 1.U || req_type === 12.U, 0.U,
-                  Mux(req_type(2,0) === 3.U, 1.U,
+                  Mux(req_type(2,0) === 3.U || (req_type(2,0) === 2.U && hit), 1.U,
                       Mux(req_type === 4.U || req_type(2,0) === 6.U, 2.U, State(i)))),
               //Mux(hit, 0.U(2.W), 2.U(2.W)),
               Mux(hit || invalid, State(i), State(i)+increcement) 
@@ -397,7 +397,7 @@ class BRRIP(n_ways: Int) extends ReplacementPolicy {
     nextState.zipWithIndex.map { case (e, i) =>
       e := Mux(i.U === touch_way,
               Mux((req_type(2,0) === 0.U && hit) || req_type(2,0) === 1.U || req_type === 12.U, 0.U,
-                  Mux(req_type(2,0) === 3.U, 1.U,
+                  Mux(req_type(2,0) === 3.U || (req_type(2,0) === 2.U && hit), 1.U,
                       Mux(req_type === 4.U || req_type(2,0) === 6.U, 3.U, State(i)))),
               //Mux(hit, 0.U(2.W), 3.U(2.W)), 
               Mux(hit || invalid, State(i), State(i)+increcement) 
