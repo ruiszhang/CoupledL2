@@ -226,6 +226,7 @@ class MainPipe(implicit p: Parameters) extends L2Module {
   ms_task.reqSource        := req_s3.reqSource
   ms_task.mergeA           := req_s3.mergeA
   ms_task.aMergeTask       := req_s3.aMergeTask
+  ms_task.UC               := req_s3.UC
   ms_task.txChannel        := 0.U
   ms_task.snpHitRelease    := false.B
   ms_task.snpHitReleaseWithData := false.B

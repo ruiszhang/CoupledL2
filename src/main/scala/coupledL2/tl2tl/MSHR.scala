@@ -205,6 +205,7 @@ class MSHR(implicit p: Parameters) extends L2Module {
     mp_release.reqSource := 0.U(MemReqSource.reqSourceBits.W)
     mp_release.mergeA := false.B
     mp_release.aMergeTask := 0.U.asTypeOf(new MergeTaskBundle)
+    mp_release.UC := 0.U
     mp_release.txChannel := 0.U
     mp_release
   }
@@ -268,6 +269,7 @@ class MSHR(implicit p: Parameters) extends L2Module {
     mp_probeack.replTask := false.B
     mp_probeack.mergeA := false.B
     mp_probeack.aMergeTask := 0.U.asTypeOf(new MergeTaskBundle)
+    mp_probeack.UC := 0.U
     mp_probeack.txChannel := 0.U
     mp_probeack
   }
@@ -358,6 +360,7 @@ class MSHR(implicit p: Parameters) extends L2Module {
     mp_grant.wayMask := 0.U(cacheParams.ways.W)
     mp_grant.mshrRetry := !state.s_retry
     mp_grant.reqSource := 0.U(MemReqSource.reqSourceBits.W)
+    mp_grant.UC := 0.U
 
     // Add merge grant task for Acquire and late Prefetch
     mp_grant.mergeA := mergeA || io.aMergeTask.valid

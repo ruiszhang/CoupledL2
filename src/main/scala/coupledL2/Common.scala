@@ -32,6 +32,7 @@ class ReplacerInfo(implicit p: Parameters) extends L2Bundle {
   val opcode = UInt(3.W)
   val reqSource = UInt(MemReqSource.reqSourceBits.W)
   val refill_prefetch = Bool()
+  val UC = UInt(2.W)
 }
 
 trait HasTLChannelBits { this: Bundle =>
@@ -109,6 +110,9 @@ class TaskBundle(implicit p: Parameters) extends L2Bundle
   // for merged MSHR tasks(Acquire & late Prefetch)
   val mergeA = Bool()
   val aMergeTask = new MergeTaskBundle()
+
+  // for l2 replacement(tubins)
+  val UC = UInt(2.W)
 
   // Used for get data from ReleaseBuf when snoop hit with same PA 
   val snpHitRelease = Bool()

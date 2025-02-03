@@ -198,4 +198,7 @@ class Slice()(implicit p: Parameters) extends BaseSlice[OuterBundle] {
 
   val monitor = Module(new Monitor())
   monitor.io.fromMainPipe <> mainPipe.io.toMonitor
+
+  val replMonitor = Module(new ReplacerMonitor())
+  replMonitor.io.fromDir <> directory.io.replDebug
 }
