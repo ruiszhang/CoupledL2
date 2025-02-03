@@ -312,7 +312,7 @@ class TestTop_L2L3L2()(implicit p: Parameters) extends LazyModule {
         channelBytes = TLChannelBeatBytes(cacheParams.blockBytes),
         minLatency = 1,
         echoFields = Nil,
-        requestFields = Seq(AliasField(2)),
+        requestFields = Seq(AliasField(2), utility.ReqSourceField()),
         responseKeys = cacheParams.respKey
       )
     ))
@@ -328,7 +328,8 @@ class TestTop_L2L3L2()(implicit p: Parameters) extends LazyModule {
       ways = 4,
       sets = 128,
       clientCaches = Seq(L1Param(aliasBitsOpt = Some(2))),
-      echoField = Seq(DirtyField()),
+      reqField = Seq(utility.ReqSourceField(), huancun.UCField()),
+      echoField = Seq(huancun.DirtyField(), huancun.TCField()),
       hartIds = Seq{i}
     )
   }))))
