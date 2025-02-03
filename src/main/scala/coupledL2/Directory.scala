@@ -277,6 +277,9 @@ class Directory(implicit p: Parameters) extends L2Module {
 
   /* ======!! Replacement logic !!====== */
   /* ====== Read, choose replaceWay ====== */
+  val replDB = ChiselDB.createTable("l2_repl_Dir", new replBundle(), basicDB = true)
+  val replInfo = Wire(new replBundle())
+
   val repl_state_s3 = if(random_repl) {
     when(io.tagWReq.fire){
       repl.miss
@@ -537,8 +540,7 @@ val isSampleSets = (req_s3.set(8,5) + req_s3.set(3,0) > 0.U)
     resetIdx := resetIdx - 1.U
   }
 
-  val replDB = ChiselDB.createTable("l2_repl_Dir", new replBundle(), basicDB = true)
-  val replInfo = Wire(new replBundle())
+
   replInfo.channel := req_s3.replacerInfo.channel
   replInfo.opcode := req_s3.replacerInfo.opcode
   replInfo.tag := req_s3.tag
