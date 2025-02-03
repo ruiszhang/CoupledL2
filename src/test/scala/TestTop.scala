@@ -340,15 +340,15 @@ class TestTop_L2L3L2()(implicit p: Parameters) extends LazyModule {
     case HCCacheParamsKey => HCCacheParameters(
       name = "L3",
       level = 3,
-      ways = 4,
-      sets = 128,
+      ways = 16,
+      sets = 4096,
       inclusive = false,
       clientCaches = (0 until nrL2).map(i =>
         CacheParameters(
           name = s"l2",
-          sets = 128,
-          ways = 4 + 2,
-          blockGranularity = log2Ceil(128)
+          sets = 1024,
+          ways = 4 + 4 + 8 + 2,
+          blockGranularity = log2Ceil(1024)
         ),
       ),
       echoField = Seq(DirtyField()),
